@@ -38,7 +38,7 @@ elif selected_data == 'フル品番: 例SG261A':
 
         association_df = temp2.apply(lambda x: x>0) 
 
-        freq_items1 = apriori(association_df, min_support=0.001, use_colnames=True) 
+        freq_items1 = apriori(association_df, min_support=0.0005, use_colnames=True) 
         # min_support 閾値 その組み合わせの全体の構成比
         freq_items1.sort_values('support', ascending=False) 
 
@@ -125,7 +125,7 @@ elif selected_data == '頭品番＋１ケタ: 例SG2':
 
         association_df = temp2.apply(lambda x: x>0) 
 
-        freq_items1 = apriori(association_df, min_support=0.001, use_colnames=True) 
+        freq_items1 = apriori(association_df, min_support=0.0005, use_colnames=True) 
         # min_support 閾値 その組み合わせの全体の構成比
         freq_items1.sort_values('support', ascending=False) 
 
