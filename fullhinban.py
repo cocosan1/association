@@ -1,7 +1,7 @@
 import pandas as pd
 from pandas.core.frame import DataFrame
 import streamlit as st
-import openpyxl
+# import openpyxl
 
 from mlxtend.frequent_patterns import apriori #頻出アイテム集合を抽出する関数
 from mlxtend.frequent_patterns import association_rules
