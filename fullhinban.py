@@ -13,7 +13,7 @@ st.markdown('## アソシエーション分析')
 def make_data(file):
     df = pd.read_excel(
     file, sheet_name='受注委託移動在庫生産照会', \
-        usecols=[1, 3, 9, 10, 15, 42]) #index　ナンバー不要　index_col=0
+        usecols=[1, 3, 9, 10, 15, 42, 50]) #index　ナンバー不要　index_col=0
     
     return df
 
@@ -28,6 +28,14 @@ else:
     st.info('今期のファイルを選択してください。')
     st.stop()
 
+#データの絞込み
+df_selected = df_rules[(df_rules['商品分類名2']!='デスク') & (df_rules['商品分類名2']!='雑品・特注品') & \
+         (df_rules['商品分類名2']!='小物・その他') & (df_rules['商品分類名2']!='雑品・特注品') &\
+         (df_rules['商品分類名2']!='ベッド') & (df_rules['商品分類名2']!='その他椅子') &\
+         (df_rules['商品分類名2']!='その他テーブル') & (df_rules['商品分類名2']!='リビングテーブル') &\
+         (df_rules['商品分類名2']!='キャビネット類') & (df_rules['商品分類名2']!='クッション')\
+            ]
+
 #************************項目選択
 selected_data = st.selectbox(
     'データ選択',
@@ -41,17 +49,17 @@ if selected_data == '--':
 
 elif selected_data == 'フル品番: 例SG261A':
 
-    df_rules['品番2'] = df_rules['商品コード'].map(lambda x:str(x).split(' ')[0])
-    df_rules['伝票番号2'] = df_rules['伝票番号'].map(lambda x:str(x)[0:8])
+    df_selected['品番2'] = df_selected['商品コード'].map(lambda x:str(x).split(' ')[0])
+    df_selected['伝票番号2'] = df_selected['伝票番号'].map(lambda x:str(x)[0:8])
 
-    temp1 = df_rules.groupby(["伝票番号2", "品番2"])["数量"].sum()
+    temp1 = df_selected.groupby(["伝票番号2", "品番2"])["数量"].sum()
 
     #行から列へピボット: unstack()
     temp2 = temp1.unstack().fillna(0) 
 
     association_df = temp2.apply(lambda x: x>0) 
 
-    freq_items1 = apriori(association_df, min_support=0.001, use_colnames=True) 
+    freq_items1 = apriori(association_df, min_support=0.0005, use_colnames=True) 
     # min_support 閾値 その組み合わせの全体の構成比
     freq_items1.sort_values('support', ascending=False) 
 
@@ -109,17 +117,17 @@ elif selected_data == 'フル品番: 例SG261A':
 #**********************************************************************************************************
 elif selected_data == '頭品番＋１ケタ: 例SG2':
 
-        df_rules['品番2'] = df_rules['商品コード'].map(lambda x:str(x)[0:3])
-        df_rules['伝票番号2'] = df_rules['伝票番号'].map(lambda x:str(x)[0:8])
+        df_selected['品番2'] = df_selected['商品コード'].map(lambda x:str(x)[0:3])
+        df_selected['伝票番号2'] = df_selected['伝票番号'].map(lambda x:str(x)[0:8])
 
-        temp1 = df_rules.groupby(["伝票番号2", "品番2"])["数量"].sum()
+        temp1 = df_selected.groupby(["伝票番号2", "品番2"])["数量"].sum()
 
         #行から列へピボット: unstack()
         temp2 = temp1.unstack().fillna(0) 
 
         association_df = temp2.apply(lambda x: x>0) 
 
-        freq_items1 = apriori(association_df, min_support=0.001, use_colnames=True) 
+        freq_items1 = apriori(association_df, min_support=0.0005, use_colnames=True) 
         # min_support 閾値 その組み合わせの全体の構成比
         freq_items1.sort_values('support', ascending=False) 
 
